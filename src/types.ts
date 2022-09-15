@@ -1,5 +1,5 @@
 import { ArrayAsString, ArrayConvertableToString } from "./array";
-import { And, If, IfElse, IsTrue, Not, _Extends } from "./type-logic";
+import { And, IfElse, IsTrue, Not, _Extends } from "./type-logic";
 
 export type anykey = keyof any;
 export type primitive = undefined | null | boolean | number | string | bigint;
@@ -33,7 +33,7 @@ export type Var<T, LeaveTuple extends boolean = false> = T extends any ? IfElse<
 
 export type Unnull<T, E = never> = T extends null | undefined ? E : unknown extends T ? E : T;
 
-export type ForseCompute<T> = T extends primitive ? T : { [K in keyof T]: ForseCompute<T[K]> };
+export type ForceCompute<T> = T extends primitive ? T : { [K in keyof T]: ForceCompute<T[K]> };
 
 export interface ErrorClass {
   new(...args: any[]): Error;

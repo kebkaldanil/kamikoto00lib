@@ -2,7 +2,7 @@ import { IsLengthGreater } from "./array";
 import { TooLongExecution, UnsafeNumber } from "./errors";
 import { Split } from "./string";
 import { And, Extends, ExtendsAnyInUnion, If, IfElse, IsFalse, IsTrue, Mnor, Nor, Not, Or, SameType, _Extends } from "./type-logic";
-import { As, ForseCompute } from "./types";
+import { As, ForceCompute } from "./types";
 
 export type TryParseNumber<T extends string> = T extends `${infer N extends number}` ? N : never;
 export type ParseNumber<T extends string, E = never> = If<Extends<T, `${TryParseNumber<T>}`>, TryParseNumber<T>, E>;
@@ -39,7 +39,7 @@ export type IsEven<T extends number | bigint> = IsTrue<T extends any ? IfElse<[
   [Nor<_Extends<T, bigint>, IsSafeInt<Extract<T, number>>>, false],
 ], Extends<`${T}`, `${number | ""}${0 | 2 | 4 | 6 | 8}`>> : never>;
 
-export type DeassambleNumber<T extends number> = ForseCompute<_DeassambleNumber_ParseSign<T> & { value: T }>;
+export type DeassambleNumber<T extends number> = ForceCompute<_DeassambleNumber_ParseSign<T> & { value: T }>;
 
 type _DeassambleNumber_ParseSign<T extends number> = `${T}` extends `-${infer A extends number}` ?
   { sign: "-", absoluteValue: A } & _DeassambleNumber_FindExponent<A, "-"> :

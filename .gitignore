@@ -1,5 +1,4 @@
-/.vscode
+.vscode
 /dist
-/index.js
-/node_modules
+node_modules
 /package-lock.json
