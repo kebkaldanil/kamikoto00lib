@@ -132,15 +132,25 @@ export function integerOrDefault(value: any, _default = 0) {
   typeof value === "bigint" ? Number(value) : Number.isSafeInteger(value) ? value : _default;
 }
 
+const xmin = -1 / Math.E;
 
-export function lambertW<MaxIT extends number = 100000000, MinIT extends number = 0>(
+export function lambertW<MaxIT extends number = 1e2, MinIT extends number = 0>(
   x: number,
   precision = 1e-12,
-  maxIterations: If<And<IsSafeInt<MaxIT>, IsPositive<MaxIT>>, MaxIT, never> = 100000000 as any,
+  maxIterations: If<And<IsSafeInt<MaxIT>, IsPositive<MaxIT>>, MaxIT, never> = 1e2 as any,
   minItarations: uint<MinIT> = 0 as any
 ) {
   if (!(Number.isSafeInteger(maxIterations) && Number.isSafeInteger(minItarations) && maxIterations > minItarations)) {
     throw new UnsafeNumber("Iterations range error");
+  }
+  if (x === 0) {
+    return 0;
+  }
+  if (Number.isNaN(x)) {
+    return NaN;
+  }
+  if (x < xmin) {
+    return NaN;
   }
   let w = 0;
   let itarationsLeft: number = maxIterations;
@@ -171,9 +181,9 @@ export function ssrt1<MaxIT extends number = 10000, MinIT extends number = 0>(
   return Math.exp(lambertW(Math.log(x), Wprec, maxIterations, minItarations));
 }*/
 
-export function ssrt<MaxIT extends number = 100000000, MinIT extends number = 0>(
+export function ssrt<MaxIT extends number = 10000, MinIT extends number = 0>(
   x: number,
-  Wprec: number = 0.001,
+  Wprec: number = 1e-12,
   maxIterations: If<And<IsSafeInt<MaxIT>, IsPositive<MaxIT>>, MaxIT, never> = 100000000 as any,
   minItarations: uint<MinIT> = 0 as any
 ) {
@@ -182,7 +192,13 @@ export function ssrt<MaxIT extends number = 100000000, MinIT extends number = 0>
   }
   if (x === 1) {
     return 1;
-  }
+  }//x = e^(-1/e)
+  //logx = -1/e
   const logx = Math.log(x);
-  return logx / lambertW(logx, Wprec, maxIterations, minItarations);
+  try {
+    return logx / lambertW(logx, Wprec, maxIterations, minItarations);
+  } catch (e) {
+    console.error(`x = ${x}`);
+    throw e;
+  }
 }

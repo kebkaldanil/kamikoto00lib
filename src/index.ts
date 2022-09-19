@@ -1,6 +1,13 @@
 export * from "./decorators";
 export * from "./errors";
-export * as random from "./random";
+import * as randomNumber from "./random/number";
+import * as randomInt from "./random/int";
+import * as randomArray from "./random/array";
+export namespace random {
+  export const number = randomNumber;
+  export const int = randomInt;
+  export const array = randomArray;
+};
 export * from "./array";
 export * from "./clamp";
 export * from "./formaters";

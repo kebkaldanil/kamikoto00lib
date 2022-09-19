@@ -53,9 +53,9 @@ type SplitBackward<
   MaxLen extends number | null = null,
 > = IfElse<[
   [Or<_Extends<string, Str>, _Extends<string, Sep>>, IfElse<[
-    [SameType<MinLen, MaxLen>, Tuple<string, MinLen>],
-    [And<SameType<MinLen, 0>, Not<ExtendsAnyInUnion<MaxLen, null>>>, Tuple<string, Extract<MaxLen, number>>],
-  ], [...Tuple<string, MinLen>, string[]]>],
+    [SameType<MinLen, MaxLen>, Tuple<MinLen, string>],
+    [And<SameType<MinLen, 0>, Not<ExtendsAnyInUnion<MaxLen, null>>>, Tuple<Extract<MaxLen, number>, string>],
+  ], [...Tuple<MinLen, string>, string[]]>],
   [FromEnd, SplitBackward<Str, Sep, MinLen, MaxLen>],
 ], SplitForward<Str, Sep, MinLen, MaxLen>>;//If<FromEnd, SplitBackward<Str, Sep, MinLen, MaxLen>, SplitForward<Str, Sep, MinLen, MaxLen>>;
 

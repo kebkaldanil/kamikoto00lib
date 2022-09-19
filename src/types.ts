@@ -1,5 +1,5 @@
 import { ArrayAsString, ArrayConvertableToString } from "./array";
-import { And, IfElse, IsTrue, Not, _Extends } from "./type-logic";
+import { And, If, IfElse, IsTrue, Not, _Extends } from "./type-logic";
 
 export type anykey = keyof any;
 export type primitive = undefined | null | boolean | number | string | bigint;
@@ -31,7 +31,7 @@ export type Var<T, LeaveTuple extends boolean = false> = T extends any ? IfElse<
   [_Extends<T, object>, { -readonly [I in keyof T]: Var<T[I], LeaveTuple> }]
 ], T> : never;
 
-export type Unnull<T, E = never> = T extends null | undefined ? E : unknown extends T ? E : T;
+export type Nullable<T, AllowUndefined extends boolean = true> = T | null | If<AllowUndefined, undefined>;
 
 export type ForceCompute<T> = T extends primitive ? T : { [K in keyof T]: ForceCompute<T[K]> };
 
