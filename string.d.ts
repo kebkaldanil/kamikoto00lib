@@ -1,0 +1,11 @@
+import { If, Mand, Not, _Extends } from "./type-logic";
+import { primitive } from "./types";
+export * from "./split";
+declare type SplitHelper<Str extends string, Sep extends string, R extends string[]> = If<Mand<[_Extends<"", Str>, _Extends<"", Sep>, Not<_Extends<0, R["length"]>>]>, R, Str extends `${infer C}${Sep}${infer Rest}` ? SplitHelper<Rest, Sep, [...R, C]> : [...R, Str]>;
+export declare type Split<Str extends string, Sep extends string> = SplitHelper<Str, Sep, []>;
+export declare type StrConcat<T extends [primitive, ...primitive[]]> = T extends [infer C extends primitive, ...infer R extends [primitive, ...primitive[]]] ? `${C}${StrConcat<R>}` : T[0];
+declare type JoinHelper<T extends primitive[], S extends primitive, R extends string> = T extends [infer C extends primitive, ...infer Rest extends primitive[]] ? JoinHelper<Rest, S, `${R}${S}${C}`> : R;
+export declare type StrJoin<T extends primitive[], S extends primitive = ","> = T extends [infer C extends primitive, ...infer R extends primitive[]] ? JoinHelper<R, S, `${C}`> : number extends T["length"] ? never : "";
+export declare function splice(to: string, position: number, length: number, str?: string): string;
+export declare function substrAfter(str: string, after: string): string | null;
+export declare function substrAfterLast(str: string, after: string): string | null;
