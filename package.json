@@ -1,6 +1,6 @@
 {
   "name": "kamikoto00lib",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "",
   "main": "test.js",
   "scripts": {
@@ -10,8 +10,6 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@types/mime": "^3.0.1",
-    "mime": "^3.0.0",
     "typescript": "^4.8.2"
   }
 }

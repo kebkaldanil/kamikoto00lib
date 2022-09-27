@@ -38,15 +38,11 @@ export async function setMime(mime: Promise<Mime> | Mime) {
   currentLoadState.loaded = true;
 }
 
-nextTick().then(
-  async () => {
-    try {
-      await setMime(import("mime").then(m => m.default));
-    } catch {
-      await setMime(import("./small-mime"));
-    }
+nextTick().then(() => {
+  if (getLoadStarted()) {
+    setMime(import("./small-mime"));
   }
-);
+});
 
 export function getType(path: string) {
   if (!loadState.loaded) {
