@@ -66,19 +66,19 @@ type SplitBackward<
  * @param options 
  *//*
 export function split<
-  Str extends string,
-  Sep extends string,
-  FromEnd extends boolean = false,
-  MinLen extends number = 0,
-  MaxLen extends number | null = null,
+ Str extends string,
+ Sep extends string,
+ FromEnd extends boolean = false,
+ MinLen extends number = 0,
+ MaxLen extends number | null = null,
 >(
-  str: Str,
-  separator: Sep,
-  options?: {
-    fromEnd?: FromEnd | null;
-    minLength?: uint<MinLen> | null;
-    maxLength?: If<MaxLen extends number ? And<IsPositive<MaxLen>, IsSafeInt<MaxLen>> : true, MaxLen, never>;
-  } | null,
+ str: Str,
+ separator: Sep,
+ options?: {
+   fromEnd?: FromEnd | null;
+   minLength?: uint<MinLen> | null;
+   maxLength?: If<MaxLen extends number ? And<IsPositive<MaxLen>, IsSafeInt<MaxLen>> : true, MaxLen, never>;
+ } | null,
 ): SplitResult<Str, Sep, FromEnd, MinLen, MaxLen>;
 */
 export function split(str: string, separator: string, options?: {
@@ -89,7 +89,7 @@ export function split(str: string, separator: string, options?: {
   if (!options)
     options = {};
   const fromEnd = options.fromEnd ?? false;
-  const minLength = options.minLength! > 0 ? Math.round(options.minLength!): 0;
+  const minLength = options.minLength! > 0 ? Math.round(options.minLength!) : 0;
   if (minLength > Number.MAX_SAFE_INTEGER) {
     throw new RangeError(`Min length (${minLength}) can not be more than ${Number.MAX_SAFE_INTEGER}`);
   }
@@ -100,16 +100,20 @@ export function split(str: string, separator: string, options?: {
   let i = 0;
   let lastIndex = fromEnd ? str.length : 0;
   const result: string[] = [];
-  while(i < maxLength) {
+  while (i < maxLength) {
     let separatorIndex: number;
     if (fromEnd) {
       separatorIndex = str.lastIndexOf(separator, lastIndex - 1);
-      result[i] = str.slice(separatorIndex + 1, lastIndex);
-      lastIndex = separatorIndex;
+      if (separatorIndex !== -1) {
+        result[i] = str.slice(separatorIndex + 1, lastIndex);
+        lastIndex = separatorIndex;
+      }
     } else {
       separatorIndex = str.indexOf(separator, lastIndex);
-      result[i] = str.slice(lastIndex, separatorIndex);
-      lastIndex = separatorIndex + separator.length;
+      if (separatorIndex !== -1) {
+        result[i] = str.slice(lastIndex, separatorIndex);
+        lastIndex = separatorIndex + separator.length;
+      }
     }
     if (separatorIndex === -1) {
       result[i] = fromEnd ? str.slice(0, lastIndex) : str.slice(lastIndex);

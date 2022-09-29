@@ -2,7 +2,7 @@ import * as number from "./number";
 import * as int from "./int";
 import { split } from "../split";
 
-export type AccesibleType = "number" | "int" | `string:${string}-${string}` | `number:${number}-${number}` | `int:${number}-${number}`;
+export type AccesibleType = "number" | "int" | `string:${string}-${string}` | `number:${number | `-${number}`}-${number}` | `int:${number | `-${number}`}-${number}`;
 
 export function of<T extends AccesibleType>(type: T, length: number): T extends `string${string}` ? string[] : number[];
 export function of(type: AccesibleType, length: number) {
