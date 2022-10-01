@@ -135,6 +135,7 @@ declare type ToIntFuncResult<X extends number, T extends number> = If<IfElse<[
 export declare function round<X extends number, T extends number = 1>(x: X, to?: T): ToIntFuncResult<X, T>;
 export declare function ceil<X extends number, T extends number = 1>(x: number, to?: number): ToIntFuncResult<X, T>;
 export declare function floor<X extends number, T extends number = 1>(x: number, to?: number): ToIntFuncResult<X, T>;
+export declare const clamp: (min: number, val: number, max: number) => number;
 export declare function numberOrDefault<T, D = 0>(value: T, _default?: D): T extends number ? T : T extends `${infer N extends number}` ? N : string extends T ? number | D : D;
 export declare function integerOrDefault<T, D = 0>(value: T, _default: D): T extends number ? If<Or<IsNumber<T>, IsInt<T>>, T, D> : T extends bigint ? number : D;
 export declare function lambertW<MaxIT extends number = 1e2, MinIT extends number = 0>(x: number, precision?: number, maxIterations?: If<And<IsSafeInt<MaxIT>, IsPositive<MaxIT>>, MaxIT, never>, minItarations?: uint<MinIT>): number;

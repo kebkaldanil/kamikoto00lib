@@ -9,7 +9,6 @@ export declare namespace random {
     const array: typeof randomArray;
 }
 export * from "./array";
-export * from "./clamp";
 export * from "./formaters";
 export * from "./mime";
 export * from "./number";
