@@ -1,12 +1,13 @@
 import { split } from "./split";
-import { anykey } from "./types";
+import { If } from "./type-logic";
+import { anykey, As, primitive } from "./types";
 
 export interface Dict<T> {
   [key: string]: T;
 }
 
-export type Like<T extends object> = {
-  [K in keyof T as T[K] extends Function ? never : K]: T[K] extends object ? Like<T[K]> : T[K];
+export type Like<T extends object, Stringify extends boolean = false> = {
+  [K in keyof T as T[K] extends Function ? never : K]: T[K] extends object ? Like<T[K]> : T[K] | If<Stringify, As<Extract<T[K], primitive>, string>>;
 };
 
 export type JsonCopyAllowed = object | string | number | boolean | any[];

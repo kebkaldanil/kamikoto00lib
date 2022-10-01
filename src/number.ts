@@ -122,6 +122,13 @@ export function floor<X extends number, T extends number = 1>(x: number, to = 1)
   return Math.floor(x / to) * to as any;
 }
 
+export const clamp = (min: number, val: number, max: number) => {
+  if (min > max) {
+    [min, max] = [max, min];
+  }
+  return Math.max(min, Math.min(max, val));
+};
+
 export function numberOrDefault<T, D = 0>(value: T, _default: D = 0 as any): T extends number ? T : T extends `${infer N extends number}` ? N : string extends T ? number | D : D {
   const num = Number(value);
   return num || num === 0 ? num : _default as any;

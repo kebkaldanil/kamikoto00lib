@@ -1,10 +1,14 @@
 import * as number from "./number";
 import * as int from "./int";
 import { split } from "../split";
+import { uint } from "../number";
+import { Tuple } from "../array";
 
-export type AccesibleType = "number" | "int" | `string:${string}-${string}` | `number:${number | `-${number}`}-${number}` | `int:${number | `-${number}`}-${number}`;
+export type AccesibleType = "number" | "int" | "string" | `string:${string}-${string}` | `number:${number | `-${number}`}-${number}` | `int:${number | `-${number}`}-${number}`;
 
-export function of<T extends AccesibleType>(type: T, length: number): T extends `string${string}` ? string[] : number[];
+export function of<T extends AccesibleType, L extends number>(type: T, length: uint<L>): Tuple<L, T extends `string${string}` ? string : number>;
+export function of(type: AccesibleType, length: number): string[] | number[];
+
 export function of(type: AccesibleType, length: number) {
   const [gtype, srange] = split(type, ":", { minLength: 1, maxLength: 2 });
   const srangeDeli = srange?.indexOf("-", 1);
@@ -43,14 +47,34 @@ export function of(type: AccesibleType, length: number) {
       if (fromAsString === undefined) {
         fromAsString = "";
       }
+      let defaultFrom = NaN;
+      for (let i = 0; i < fromAsString.length; i++) {
+        const cur = fromAsString.codePointAt(0)!;
+        if (cur < defaultFrom) {
+          defaultFrom = cur;
+        }
+      }
+      if (Number.isNaN(defaultFrom)) {
+        defaultFrom = 97;//a
+      }
+      let defaultTo = 0;
+      for (let i = 0; i < fromAsString.length; i++) {
+        const cur = fromAsString.codePointAt(0)!;
+        if (cur > defaultTo) {
+          defaultTo = cur;
+        }
+      }
+      if (toAsString === undefined) {                   //z
+        toAsString = String.fromCodePoint(defaultTo || 122).repeat(Math.max(fromAsString.length, 1));
+      }
       for (let i = 0; i < length; i++) {
-        const length = int.inRange(fromAsString.length, toAsString.length + 1);
+        const length = int.inRange(fromAsString.length || 1, toAsString.length + 1);
         let str = "";
         for (let stri = 0; stri < length; stri++) {
           str += String.fromCodePoint(
             int.inRange(
-              fromAsString.codePointAt(stri)!,
-              toAsString.codePointAt(stri)!,
+              fromAsString.codePointAt(stri) || defaultFrom,
+              toAsString.codePointAt(stri) || defaultTo,
             ),
           );
         }

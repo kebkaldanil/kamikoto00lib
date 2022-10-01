@@ -9,7 +9,6 @@ export namespace random {
   export const array = randomArray;
 };
 export * from "./array";
-export * from "./clamp";
 export * from "./formaters";
 export * from "./mime";
 export * from "./number";
