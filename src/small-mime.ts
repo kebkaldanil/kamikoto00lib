@@ -1,6 +1,5 @@
-import { SwapKeyAndValuePriority, swapKeyAndValue } from "./types/object.ts";
+import { swapKeyAndValue, SwapKeyAndValuePriority } from "./types/object.ts";
 import { substrAfterLast } from "./types/string.ts";
-
 
 const mimeTable = Object.freeze({
   //text
@@ -62,11 +61,21 @@ const extensionTable = Object.freeze(Object.assign(
 export type SupportedExtensions = keyof typeof mimeTable;
 export type SupportedMime = keyof typeof extensionTable;
 
-export function getType<const S extends string>(path: S): Lowercase<S> extends `${string}.${infer T extends SupportedExtensions}` ? typeof mimeTable[T] : S extends SupportedExtensions ? typeof mimeTable[Lowercase<S>] : string extends S ? string : null {
+export function getType<const S extends string>(
+  path: S,
+): Lowercase<S> extends `${string}.${infer T extends SupportedExtensions}`
+  ? typeof mimeTable[T]
+  : S extends SupportedExtensions ? typeof mimeTable[Lowercase<S>]
+  : string extends S ? string
+  : null {
   const extension = substrAfterLast(path, ".") || path;
   return mimeTable[extension.toLowerCase() as never] || null;
 }
 
-export function getExtension<const T extends string>(mime: T): Lowercase<T> extends SupportedMime ? typeof extensionTable[Lowercase<T>] : string extends T ? string : null {
+export function getExtension<const T extends string>(
+  mime: T,
+): Lowercase<T> extends SupportedMime ? typeof extensionTable[Lowercase<T>]
+  : string extends T ? string
+  : null {
   return extensionTable[mime.toLowerCase() as never] || null;
 }

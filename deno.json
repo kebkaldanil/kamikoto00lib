@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "strict": true
+  },
+  "lint": {
+    "include": ["src/"],
+    "rules": {
+      "tags": ["recommended"]
+    }
+  },
+  "fmt": {
+    "useTabs": false,
+    "lineWidth": 90,
+    "indentWidth": 2,
+    "semiColons": true,
+    "singleQuote": false,
+    "include": ["src/"]
+  },
+  "lock": false,
+  "nodeModulesDir": false,
+  "tasks": {
+    "build": "deno run --allow-all build.ts -d ./dist"
+  }
+}

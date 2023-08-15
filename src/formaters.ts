@@ -4,7 +4,7 @@ const timeNumIndexToLen = Object.freeze([2, 2, 2, 3]);
 
 /**
  * tag function for time formatting
- * 
+ *
  * @example
  * const date = new Date();
  * const hours = date.getHours();
@@ -46,8 +46,11 @@ export function time(strings: TemplateStringsArray, ...params: unknown[]) {
  * @returns fromated time
  * @example "14:28:03.049"
  */
-export function formatedTime(date?: Date | string | number | null, showMili = false) {
-  const p = (date == null ? new Date() : date instanceof Date ? date : new Date(date));
+export function formatedTime(
+  date?: Date | string | number | null,
+  showMili = false,
+) {
+  const p = date == null ? new Date() : date instanceof Date ? date : new Date(date);
   if (showMili) {
     return time`${p.getHours()}:${p.getMinutes()}:${p.getSeconds()}.${p.getMilliseconds()}`;
   }

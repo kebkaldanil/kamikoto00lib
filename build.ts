@@ -1,10 +1,19 @@
-import { PackageJson, build, emptyDir } from "https://deno.land/x/dnt@0.38.0/mod.ts";
+import { build, emptyDir, PackageJson } from "https://deno.land/x/dnt@0.38.0/mod.ts";
+import * as flagsModule from "https://deno.land/std@0.194.0/flags/mod.ts";
 
-const distDir = Deno.args[0];
+const args = flagsModule.parse(Deno.args, {
+  string: ["d"],
+  default: {
+    d: "./dist",
+  },
+});
+const distDir = args.d;
 
 await emptyDir(distDir);
 
-const packageJson = JSON.parse(new TextDecoder().decode(await Deno.readFile("./package.json"))) as PackageJson;
+const packageJson = JSON.parse(
+  new TextDecoder().decode(await Deno.readFile("./package.json")),
+) as PackageJson;
 
 delete packageJson.scripts;
 delete packageJson.devDependencies;
@@ -30,7 +39,9 @@ await build({
       process.stdout.pipeTo(Deno.stdout.writable, { preventClose: true });
       const { code, signal, success } = await process.status;
       if (!success) {
-        throw new Error(`pnpm link failed with code ${code} and signal ${signal}`);
+        throw new Error(
+          `pnpm link failed with code ${code} and signal ${signal}`,
+        );
       }
     })().catch(console.error);
     //Deno.copyFileSync("CHANGELOG.md", "npm/CHANGELOG.md");

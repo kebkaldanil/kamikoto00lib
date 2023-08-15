@@ -3,7 +3,7 @@
   "version": "0.2.0",
   "description": "",
   "scripts": {
-    "build": "deno run --allow-all build.ts ./dist"
+    "build": "deno task build"
   },
   "keywords": [],
   "author": "",

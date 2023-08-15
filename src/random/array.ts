@@ -4,9 +4,18 @@ import { Tuple } from "../types/array.ts";
 import { uint } from "../types/number.ts";
 import { int, number } from "./index.ts";
 
-export type AccesibleType = "number" | "int" | "string" | `string:${string}-${string}` | `number:${number | `-${number}`}-${number}` | `int:${number | `-${number}`}-${number}`;
+export type AccesibleType =
+  | "number"
+  | "int"
+  | "string"
+  | `string:${string}-${string}`
+  | `number:${number | `-${number}`}-${number}`
+  | `int:${number | `-${number}`}-${number}`;
 
-export function of<const T extends AccesibleType, const L extends number>(type: T, length: uint<L>): Tuple<L, T extends `string${string}` ? string : number>;
+export function of<const T extends AccesibleType, const L extends number>(
+  type: T,
+  length: uint<L>,
+): Tuple<L, T extends `string${string}` ? string : number>;
 export function of(type: AccesibleType, length: number): string[] | number[];
 
 export function of(type: AccesibleType, length: number) {
@@ -54,7 +63,7 @@ export function of(type: AccesibleType, length: number) {
         }
       }
       if (Number.isNaN(defaultFrom)) {
-        defaultFrom = 97;//a
+        defaultFrom = 97; //a
       }
       let defaultTo = 0;
       for (let i = 0; i < fromAsString.length; i++) {
@@ -63,11 +72,16 @@ export function of(type: AccesibleType, length: number) {
           defaultTo = cur;
         }
       }
-      if (toAsString === undefined) {                   //z
-        toAsString = String.fromCodePoint(defaultTo || 122).repeat(Math.max(fromAsString.length, 1));
+      if (toAsString === undefined) { //z
+        toAsString = String.fromCodePoint(defaultTo || 122).repeat(
+          Math.max(fromAsString.length, 1),
+        );
       }
       for (let i = 0; i < length; i++) {
-        const length = int.inRange(fromAsString.length || 1, toAsString.length + 1);
+        const length = int.inRange(
+          fromAsString.length || 1,
+          toAsString.length + 1,
+        );
         let str = "";
         for (let stri = 0; stri < length; stri++) {
           str += String.fromCodePoint(
@@ -82,5 +96,7 @@ export function of(type: AccesibleType, length: number) {
       return result;
     }
   }
-  throw new ParseError(`Unexpected "${gtype}" in ${type}; number | int | string expected`);
+  throw new ParseError(
+    `Unexpected "${gtype}" in ${type}; number | int | string expected`,
+  );
 }

@@ -24,7 +24,10 @@ export enum CliColor {
   BgWhite = "\x1b[47m",
 }
 
-export function coloredCli(strs: TemplateStringsArray, ...objs: (string | number | bigint | boolean | { toString(): string })[]) {
+export function coloredCli(
+  strs: TemplateStringsArray,
+  ...objs: (string | number | bigint | boolean | { toString(): string })[]
+) {
   let i = strs.length;
   let res = strs[--i];
   while (i--) {

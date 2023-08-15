@@ -24,7 +24,7 @@ let current: Mime;
 let loadState: LoadState = {
   loaded: false,
   loadStarted: false,
-  loadPrevented: false
+  loadPrevented: false,
 };
 
 export const getLoaded = () => loadState.loaded;
@@ -38,7 +38,7 @@ export async function setMime(mime: Promise<Mime> | Mime) {
   const currentLoadState: LoadState = loadState = {
     loaded: false,
     loadStarted: true,
-    loadPrevented: false
+    loadPrevented: false,
   };
   const r = await mime;
   if (!currentLoadState.loadPrevented) {

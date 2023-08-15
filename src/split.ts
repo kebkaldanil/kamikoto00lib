@@ -1,21 +1,32 @@
 import { MinLengthError } from "./errors/min-length.ts";
 
-export function split(str: string, separator: string, options?: {
-  fromEnd?: boolean | null;
-  minLength?: number | null;
-  maxLength?: number | null;
-} | null): string[] {
-  if (!options)
+export function split(
+  str: string,
+  separator: string,
+  options?: {
+    fromEnd?: boolean | null;
+    minLength?: number | null;
+    maxLength?: number | null;
+  } | null,
+): string[] {
+  if (!options) {
     options = {};
+  }
   const fromEnd = options.fromEnd ?? false;
   const minLength = options.minLength! > 0 ? Math.round(options.minLength!) : 0;
   if (minLength > Number.MAX_SAFE_INTEGER) {
-    throw new RangeError(`Min length (${minLength}) can not be more than ${Number.MAX_SAFE_INTEGER}`);
+    throw new RangeError(
+      `Min length (${minLength}) can not be more than ${Number.MAX_SAFE_INTEGER}`,
+    );
   }
-  const maxLength = Math.max(minLength, options.maxLength! >= 0.5 ? Math.round(options.maxLength!) : Infinity);
+  const maxLength = Math.max(
+    minLength,
+    options.maxLength! >= 0.5 ? Math.round(options.maxLength!) : Infinity,
+  );
   str = "" + str;
-  if (minLength === 0 && maxLength === null || maxLength === Infinity)
+  if (minLength === 0 && maxLength === null || maxLength === Infinity) {
     return String.prototype.split.call(str, separator as never);
+  }
   let i = 0;
   let lastIndex = fromEnd ? str.length : 0;
   const result: string[] = [];
