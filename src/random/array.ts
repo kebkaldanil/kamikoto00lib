@@ -1,12 +1,12 @@
-import * as number from "./number";
-import * as int from "./int";
-import { split } from "../split";
-import { uint } from "../number";
-import { Tuple } from "../array";
+import { ParseError } from "../errors/parse.ts";
+import { split } from "../split.ts";
+import { Tuple } from "../types/array.ts";
+import { uint } from "../types/number.ts";
+import { int, number } from "./index.ts";
 
 export type AccesibleType = "number" | "int" | "string" | `string:${string}-${string}` | `number:${number | `-${number}`}-${number}` | `int:${number | `-${number}`}-${number}`;
 
-export function of<T extends AccesibleType, L extends number>(type: T, length: uint<L>): Tuple<L, T extends `string${string}` ? string : number>;
+export function of<const T extends AccesibleType, const L extends number>(type: T, length: uint<L>): Tuple<L, T extends `string${string}` ? string : number>;
 export function of(type: AccesibleType, length: number): string[] | number[];
 
 export function of(type: AccesibleType, length: number) {
@@ -22,9 +22,8 @@ export function of(type: AccesibleType, length: number) {
   }
   switch (gtype) {
     case "number": {
-      const result = <number[]>[];
-      //@ts-expect-error
-      const from = +fromAsString || 0;
+      const result: number[] = [];
+      const from = +fromAsString! || 0;
       const to = +(toAsString ?? 1);
       for (let i = 0; i < length; i++) {
         result[i] = number.inRange(from, to);
@@ -32,7 +31,7 @@ export function of(type: AccesibleType, length: number) {
       return result;
     }
     case "int": {
-      const result = <number[]>[];
+      const result: number[] = [];
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       /**@ts-ignore */
       const from = fromAsString | 0;
@@ -43,7 +42,7 @@ export function of(type: AccesibleType, length: number) {
       return result;
     }
     case "string": {
-      const result = <string[]>[];
+      const result: string[] = [];
       if (fromAsString === undefined) {
         fromAsString = "";
       }
@@ -83,16 +82,5 @@ export function of(type: AccesibleType, length: number) {
       return result;
     }
   }
-  throw new Error();
-};
-  /*,
-} as {
-of(
-  type: "number" | "int" | `number:${number}-${number}` | `int:${number}-${number}`,
-  length: number
-): number[];
-of(
-  type: `string:${string}-${string}`,
-  length: number
-): string[];
-};*/
+  throw new ParseError(`Unexpected "${gtype}" in ${type}; number | int | string expected`);
+}

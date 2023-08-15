@@ -1,5 +1,6 @@
-import { CustomError } from "./decorators";
-import { nextTick } from "./promise";
+import { CustomError } from "./decorators/error.ts";
+import { nextTick } from "./promise.ts";
+import * as smallMime from "./small-mime.ts";
 
 export interface Mime {
   getType(path: string): string | null;
@@ -20,7 +21,11 @@ export class MimeIsNotLoadedError extends Error {
 }
 
 let current: Mime;
-let loadState: LoadState = { loaded: false, loadStarted: false, loadPrevented: false };
+let loadState: LoadState = {
+  loaded: false,
+  loadStarted: false,
+  loadPrevented: false
+};
 
 export const getLoaded = () => loadState.loaded;
 export const getLoadPrevented = () => loadState.loadPrevented;
@@ -30,17 +35,25 @@ export async function setMime(mime: Promise<Mime> | Mime) {
   if (loadState.loadStarted) {
     loadState.loadPrevented = true;
   }
-  const currentLoadState: LoadState = loadState = { loaded: false, loadStarted: true, loadPrevented: false };
+  const currentLoadState: LoadState = loadState = {
+    loaded: false,
+    loadStarted: true,
+    loadPrevented: false
+  };
   const r = await mime;
-  if (currentLoadState.loadPrevented) {
+  if (!currentLoadState.loadPrevented) {
     current = r;
   }
   currentLoadState.loaded = true;
 }
 
+export function loadMini() {
+  return setMime(smallMime);
+}
+
 nextTick().then(() => {
-  if (getLoadStarted()) {
-    setMime(import("./small-mime"));
+  if (!loadState.loadStarted) {
+    loadMini();
   }
 });
 
@@ -57,8 +70,3 @@ export function getExtension(mime: string) {
   }
   return current.getExtension(mime);
 }
-
-export default {
-  getType,
-  getExtension,
-};

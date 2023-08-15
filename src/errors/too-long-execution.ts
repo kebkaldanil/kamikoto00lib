@@ -1,12 +1,10 @@
-import { CustomError } from "../decorators";
+import { CustomError } from "../decorators/error.ts";
 
 @CustomError()
-export class TooLongExecution<T, A = any> extends Error {
-  result: T;
+export class TooLongExecution<T, A> extends Error {
   args?: A;
-  constructor(result: T, message?: string | null, args?: A) {
+  constructor(public result: T, message?: string | null, args?: A) {
     super(message ?? undefined);
-    this.result = result;
     if (args !== undefined) {
       this.args = args;
     }
