@@ -87,6 +87,11 @@ export function pojoDeepCopy(src: Dict | primitive<null>): unknown {
   return undefined;
 }
 
+export type ComputePropertyOnceOptions = {
+  enumerableAfterCompute?: boolean;
+  enumerableBeforeCompute?: boolean;
+} | boolean;
+
 export function computePropertyOnce<
   const T extends object,
   const K extends PropertyKey,
@@ -95,14 +100,26 @@ export function computePropertyOnce<
   obj: T,
   key: K,
   compute: () => N,
+  options: ComputePropertyOnceOptions = true,
 ): asserts obj is T & Record<K, N> {
+  const { enumerableAfterCompute = true, enumerableBeforeCompute = true } =
+    typeof options === "boolean"
+      ? { enumerableAfterCompute: options, enumerableBeforeCompute: options }
+      : options;
   Object.defineProperty(obj, key, {
     get: () => {
-      delete (obj as Record<K, N>)[key];
-      return (obj as Record<K, N>)[key] = compute.call(obj);
+      const value = compute.call(obj);
+      Object.defineProperty(obj, key, {
+        value,
+        configurable: true,
+        enumerable: enumerableAfterCompute,
+        writable: false,
+      });
+      return value;
     },
     configurable: true,
-    enumerable: true,
+    enumerable: enumerableBeforeCompute,
+    writable: false,
   });
 }
 
@@ -111,9 +128,17 @@ export type Getters<T> = {
 };
 
 export function extendsObjectWithOnceComputedProperties<
-  const T,
-  const A,
->(obj: T, compute: Getters<A>): asserts obj is T & A {
+  const T extends object,
+  const A extends object,
+>(
+  obj: T,
+  compute: Getters<A>,
+  options: ComputePropertyOnceOptions = true,
+): asserts obj is T & A {
+  const { enumerableAfterCompute = true, enumerableBeforeCompute = true } =
+    typeof options === "boolean"
+      ? { enumerableAfterCompute: options, enumerableBeforeCompute: options }
+      : options;
   const keys: (string | symbol)[] = [];
   const symbols = Object.getOwnPropertySymbols(compute);
   for (const key in compute) {
@@ -126,13 +151,20 @@ export function extendsObjectWithOnceComputedProperties<
     keys.map((key) => {
       const descriptor: PropertyDescriptor = {
         get() {
-          delete obj[key as keyof T];
-          return obj[key as keyof T] = compute[key as keyof A].call(
+          const value = compute[key as keyof A].call(
             obj as T & A,
-          ) as never;
+          );
+          Object.defineProperty(obj, key, {
+            value,
+            configurable: true,
+            enumerable: enumerableAfterCompute,
+            writable: false,
+          });
+          return value;
         },
         configurable: true,
-        enumerable: true,
+        enumerable: enumerableBeforeCompute,
+        writable: false,
       };
       return [
         key,
@@ -143,15 +175,17 @@ export function extendsObjectWithOnceComputedProperties<
   Object.defineProperties(obj, descriptors);
 }
 
-export const mapDict = <const K extends PropertyKey, const TS, const TD>(
-  src: Record<K, TS>,
-  cb: (key: Extract<string, K>, value: TS) => TD,
+export const mapDict = <const S extends object | Dict, const DT>(
+  src: S,
+  cb: <const K extends keyof S & primitive>(entry: [K, S[K]]) => DT,
 ) =>
   Object.fromEntries(
-    Object.entries<TS>(src).map((
-      [key, value],
-    ) => [key, cb(key as Extract<string, K>, value)]),
-  ) as Record<Extract<string, K>, TD>;
+    Object.entries(src).map((
+      entry,
+    ) => [entry[0], cb(entry as [keyof S & primitive, S[keyof S & primitive]])]),
+  ) as {
+    -readonly [K in keyof S & primitive]: DT;
+  };
 
 export const enum SwapKeyAndValuePriority {
   First = 0,
