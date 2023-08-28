@@ -11,11 +11,11 @@ export interface ReadonlyDict<T = unknown> {
   readonly [key: string]: T | undefined;
 }
 
-export type Method<O = unknown, A extends AnyArray = AnyArray, R = unknown> = (
+export type Method<O = unknown, A extends AnyArray = never[], R = unknown> = (
   this: O,
   ...args: A
 ) => R;
-export type Func<A extends AnyArray = AnyArray, R = unknown> = (
+export type Func<A extends AnyArray = never[], R = unknown> = (
   ...args: A
 ) => R;
 
