@@ -5,6 +5,9 @@
   "scripts": {
     "build": "deno task build"
   },
+  "publishConfig": {
+    "directory": "dist"
+  },
   "keywords": [],
   "author": "",
   "license": "MIT",

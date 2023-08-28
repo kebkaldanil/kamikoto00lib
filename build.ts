@@ -2,11 +2,14 @@ import { build, emptyDir, PackageJson } from "https://deno.land/x/dnt@0.38.0/mod
 import * as flagsModule from "https://deno.land/std@0.194.0/flags/mod.ts";
 
 const args = flagsModule.parse(Deno.args, {
-  boolean: ["link"],
+  boolean: [
+    "link",
+    "publish",
+  ],
   string: [
     "dist",
     "package-manager",
-    "publish",
+    "otp",
   ],
   alias: {
     "dist": ["d"],
@@ -21,7 +24,7 @@ const args = flagsModule.parse(Deno.args, {
 const {
   dist: distDir,
   link: doLink,
-  publish: doPublish,
+  publish: doPublish
 } = args;
 const packageManager = args["package-manager"] || Deno.env.get("PACKAGE_MANAGER") ||
   "npm";
@@ -74,6 +77,7 @@ const packageJson = JSON.parse(
 
 delete packageJson.scripts;
 delete packageJson.devDependencies;
+delete packageJson.publishConfig;
 
 await build({
   entryPoints: ["./src/index.ts"],
@@ -101,9 +105,15 @@ await build({
 });
 
 async function publish() {
-  const args = ["publish"];
-  console.log(`${packageManager} ${args.join(" ")}`);
-  await runPmCommand("publish", { cwd: distDir });
+  let otp: string | null | undefined = args.otp || Deno.env.get("OTP");
+  if (!(otp && /^(?:\d\s*){6}$/.test(otp))) {
+    otp = prompt("Enter code from Authenticator for your npm account to publish: ");
+    if (!(otp && /^(?:\d\s*){6}$/.test(otp))) {
+      console.log("Incorrect code format, publish failed");
+      return;
+    }
+  }
+  await runPmCommand("publish", { cwd: distDir, args: ["--no-git-checks", `--otp=${String.raw`${otp}`}`] });
 }
 
 async function link() {
