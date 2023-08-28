@@ -9,8 +9,12 @@
     "directory": "dist"
   },
   "keywords": [],
-  "author": "",
+  "author": "kamikoto00",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kebkaldanil/kamikoto00lib.git"
+  },
   "devDependencies": {
     "typescript": "^5.1.6"
   }
