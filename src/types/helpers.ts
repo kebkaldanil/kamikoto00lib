@@ -8,6 +8,7 @@ import {
   If,
   IfElse,
   IsFalse,
+  Or,
 } from "../type-logic.ts";
 
 /**except symbol*/
@@ -97,3 +98,15 @@ export interface ErrorClass {
 }
 
 export type ValueOf<T> = T[keyof T];
+
+export type IsUnion<T> = (
+  [T, never] extends [infer U, never]
+    ? U extends unknown ? [T, keyof U] extends [U | boolean, keyof T] ? false : true
+    : never
+    : never
+) extends false ? false : true;
+
+export type IsPrimitiveConvertableTo<
+  T extends primitive<null>,
+  E extends primitive<null>,
+> = Or<Extends<T, E>, Extends<`${T}`, `${E}`>>;

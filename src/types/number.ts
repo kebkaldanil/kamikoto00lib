@@ -330,3 +330,7 @@ export const numberToHex = (num: number) =>
 
 export const numberFromHex = (hex: string) =>
   numberFromBigInt64Representation(bigInt64FromHex(hex));
+
+export const nearlyEquals = (a: number, b: number, precision = 1e-6) =>
+  Math.abs(a - b) <= precision;
+export const hasFlag = <F extends number | bigint>(v: F, f: F) => (v & f) === f;

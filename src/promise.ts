@@ -18,7 +18,7 @@ const tickDelayIntervalsCallbacks: Record<
  * Creates a delayed tick mechanism with the specified time interval.
  *
  * @param {number} ms - The time interval in milliseconds.
- * @returns {Promise<void>} - A promise that resolves after the specified time interval.
+ * @returns {Promise<void>} - A promise that resolves with a fixed time delay.
  */
 export const tickDelay = (ms: number) =>
   new Promise<void>((resolve) => {

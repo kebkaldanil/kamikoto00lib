@@ -1,13 +1,13 @@
 {
   "name": "kamikoto00lib",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "",
   "scripts": {
     "build": "deno task build"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {
     "typescript": "^5.1.6"
   }
