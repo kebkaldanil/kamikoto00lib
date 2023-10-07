@@ -1,4 +1,36 @@
-import { MinLengthError } from "./errors/min-length.ts";
+import { MinLengthError } from "../errors/index.ts";
+
+export function splice(to: string, position: number, length: number, str = "") {
+  const firstToPart = to.slice(0, position);
+  const lastToPart = to.slice(position + length);
+  return firstToPart + str + lastToPart;
+}
+
+export function substrAfter(str: string, after: string) {
+  const index = str.indexOf(after);
+  if (index === -1) {
+    return null;
+  }
+  return str.slice(index + after.length);
+}
+
+export function substrAfterLast(str: string, after: string) {
+  const index = str.lastIndexOf(after);
+  if (index === -1) {
+    return null;
+  }
+  return str.slice(index + after.length);
+}
+
+export function countOccurrences(str: string, part: string) {
+  let counter = -1;
+  let index = str.indexOf(part);
+  while (index !== -1) {
+    index = str.indexOf(part, index + 1);
+    counter++;
+  }
+  return counter;
+}
 
 export function split(
   str: string,

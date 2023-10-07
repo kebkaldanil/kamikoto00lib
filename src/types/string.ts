@@ -1,10 +1,8 @@
-import { _Extends, If, Mand, Not } from "../type-logic.ts";
+import { _Extends, If, Mand, Not, SameType } from "../type-logic.ts";
 import { primitive } from "./helpers.ts";
 
-export * from "../split.ts";
-
 /** true only if type is exactly string */
-export type IsString<T> = _Extends<string, T>;
+export type IsString<T> = SameType<string, T>;
 
 type SplitHelper<Str extends string, Sep extends string, R extends string[]> = If<
   Mand<[_Extends<"", Str>, _Extends<"", Sep>, Not<_Extends<0, R["length"]>>]>,
@@ -39,34 +37,8 @@ export type StrJoin<
   : number extends T["length"] ? never
   : "";
 
-export function splice(to: string, position: number, length: number, str = "") {
-  const firstToPart = to.slice(0, position);
-  const lastToPart = to.slice(position + length);
-  return firstToPart + str + lastToPart;
-}
-
-export function substrAfter(str: string, after: string) {
-  const index = str.indexOf(after);
-  if (index === -1) {
-    return null;
-  }
-  return str.slice(index + after.length);
-}
-
-export function substrAfterLast(str: string, after: string) {
-  const index = str.lastIndexOf(after);
-  if (index === -1) {
-    return null;
-  }
-  return str.slice(index + after.length);
-}
-
-export function countOccurrences(str: string, part: string) {
-  let counter = -1;
-  let index = str.indexOf(part);
-  while (index !== -1) {
-    index = str.indexOf(part, index + 1);
-    counter++;
-  }
-  return counter;
-}
+export type StrLen<Str extends string> = If<
+  IsString<Str>,
+  number,
+  Split<Str, "">["length"]
+>;

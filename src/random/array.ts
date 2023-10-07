@@ -1,7 +1,7 @@
 import { ParseError } from "../errors/parse.ts";
-import { split } from "../split.ts";
 import { Tuple } from "../types/array.ts";
 import { uint } from "../types/number.ts";
+import { split } from "../utils/string.ts";
 import { int, number } from "./index.ts";
 
 export type AccesibleType =
