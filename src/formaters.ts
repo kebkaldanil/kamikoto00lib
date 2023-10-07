@@ -1,4 +1,4 @@
-import { integerOrDefault, padNumberToLength } from "./types/number.ts";
+import { integerOrDefault, padNumberToLength } from "./utils/number.ts";
 
 const timeNumIndexToLen = Object.freeze([2, 2, 2, 3]);
 

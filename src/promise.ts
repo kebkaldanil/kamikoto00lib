@@ -1,4 +1,4 @@
-import { Func } from "./types/object.ts";
+import { Func } from "./types/function.ts";
 
 export const delay = (ms: number) =>
   new Promise<void>((resolve) => setTimeout(resolve, ms));

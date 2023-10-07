@@ -1,5 +1,5 @@
-import { swapKeyAndValue, SwapKeyAndValuePriority } from "./types/object.ts";
-import { substrAfterLast } from "./types/string.ts";
+import { swapKeyAndValue, SwapKeyAndValuePriority } from "./utils/object.ts";
+import { substrAfterLast } from "./utils/string.ts";
 
 const mimeTable = Object.freeze({
   //text

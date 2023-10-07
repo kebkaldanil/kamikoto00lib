@@ -1,5 +1,4 @@
 import { ArrayAsString, ArrayConvertableToString } from "./array.ts";
-import { Method } from "./object.ts";
 import {
   _Extends,
   And,
@@ -10,6 +9,7 @@ import {
   IsFalse,
   Or,
 } from "../type-logic.ts";
+import { Method } from "./function.ts";
 
 /**except symbol*/
 export type primitive<T extends null | false = false> =
