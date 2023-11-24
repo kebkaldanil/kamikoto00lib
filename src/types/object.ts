@@ -21,3 +21,7 @@ export type Getters<T> = {
 export interface Class<T = object> {
   new (...args: AnyArray): T;
 }
+
+export interface Stringifiable {
+  toString(): string;
+}

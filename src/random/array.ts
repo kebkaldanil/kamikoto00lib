@@ -2,7 +2,7 @@ import { ParseError } from "../errors/parse.ts";
 import { Tuple } from "../types/array.ts";
 import { uint } from "../types/number.ts";
 import { split } from "../utils/string.ts";
-import { int, number } from "./index.ts";
+import { int, number, string } from "./index.ts";
 
 export type AccesibleType =
   | "number"
@@ -46,52 +46,22 @@ export function of(type: AccesibleType, length: number) {
       const from = fromAsString | 0;
       const to = +(toAsString ?? Number.MAX_SAFE_INTEGER);
       for (let i = 0; i < length; i++) {
-        result[i] = int.inRange(from, to);
+        result[i] = int.inRange(from, to + 1);
       }
       return result;
     }
     case "string": {
       const result: string[] = [];
-      if (fromAsString === undefined) {
-        fromAsString = "";
-      }
-      let defaultFrom = NaN;
-      for (let i = 0; i < fromAsString.length; i++) {
-        const cur = fromAsString.codePointAt(0)!;
-        if (cur < defaultFrom) {
-          defaultFrom = cur;
-        }
-      }
-      if (Number.isNaN(defaultFrom)) {
-        defaultFrom = 97; //a
-      }
-      let defaultTo = 0;
-      for (let i = 0; i < fromAsString.length; i++) {
-        const cur = fromAsString.codePointAt(0)!;
-        if (cur > defaultTo) {
-          defaultTo = cur;
-        }
-      }
-      if (toAsString === undefined) { //z
-        toAsString = String.fromCodePoint(defaultTo || 122).repeat(
-          Math.max(fromAsString.length, 1),
-        );
-      }
       for (let i = 0; i < length; i++) {
-        const length = int.inRange(
-          fromAsString.length || 1,
-          toAsString.length + 1,
-        );
-        let str = "";
-        for (let stri = 0; stri < length; stri++) {
-          str += String.fromCodePoint(
-            int.inRange(
-              fromAsString.codePointAt(stri) || defaultFrom,
-              toAsString.codePointAt(stri) || defaultTo,
-            ),
-          );
+        let minLen = fromAsString?.length || 0;
+        let maxLen = toAsString.length;
+        if (minLen > maxLen) {
+          const t = minLen;
+          minLen = maxLen;
+          maxLen = t;
         }
-        result[i] = str;
+        const len = int.inRange(minLen, maxLen + 1);
+        result[i] = string(len, fromAsString || "", toAsString);
       }
       return result;
     }

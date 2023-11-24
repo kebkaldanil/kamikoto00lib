@@ -16,8 +16,8 @@ export function areEqual(a: Dict<unknown>, b: Dict<unknown>): boolean {
   ) {
     return true;
   }
-  if (Array.isArray(a) && Array.isArray(b) && a.length === b.length) {
-    const { length } = a;
+  const { length } = a;
+  if (Array.isArray(a) && Array.isArray(b) && length === b.length) {
     for (let i = 0; i < length; i++) {
       if (!areEqual(a[i], b[i])) {
         return false;

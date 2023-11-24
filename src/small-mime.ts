@@ -39,9 +39,12 @@ const mimeTable = Object.freeze({
   "ogv": "video/ogg",
   //media?
   "ogx": "application/ogg",
-  //other
+  //archive
   "zip": "application/zip",
-  "rar": "application/x-rar-compressed",
+  "zipx": "application/zip",
+  "gz": "application/gzip",
+  "zst": "application/zstd",
+  "jar": "application/java-archive",
 });
 
 const extensionTable = Object.freeze(Object.assign(
@@ -55,6 +58,8 @@ const extensionTable = Object.freeze(Object.assign(
     "audio/wav": "wav",
     "audio/x-wav": "wav",
     "audio/x-pn-wav": "wav",
+    //archive
+    "application/x-zip-compressed": "zip",
   },
 ));
 
