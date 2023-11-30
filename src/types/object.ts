@@ -9,8 +9,8 @@ export interface ReadonlyDict<T = unknown> {
   readonly [key: string]: T | undefined;
 }
 
-export type Like<T> = {
-  [K in keyof T as T[K] extends Func ? never : K]: T[K] extends object ? Like<T[K]>
+export type ObjectLike<T> = {
+  [K in keyof T as T[K] extends Func ? never : K]: T[K] extends object ? ObjectLike<T[K]>
     : T[K];
 };
 
@@ -20,8 +20,4 @@ export type Getters<T> = {
 
 export interface Class<T = object> {
   new (...args: AnyArray): T;
-}
-
-export interface Stringifiable {
-  toString(): string;
 }

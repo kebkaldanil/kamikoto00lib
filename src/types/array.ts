@@ -3,7 +3,8 @@ import { primitive } from "./helpers.ts";
 import { IsNumber, IsPositive } from "./number.ts";
 import { StrJoin } from "./string.ts";
 
-export type AnyArray = readonly unknown[];
+// deno-lint-ignore no-explicit-any
+export type AnyArray = readonly any[];
 
 export type Tuple<N extends number, T> = If<
   IsNumber<N>,

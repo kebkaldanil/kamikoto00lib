@@ -1,7 +1,11 @@
 import { uint } from "../types/number.ts";
 import { inRange } from "./int.ts";
 
-export function string<const L extends number>(length: uint<L>, begin: string, end: string) {
+export function string<const L extends number>(
+  length: uint<L>,
+  begin: string,
+  end: string,
+) {
   let r = "";
   const db = begin.length ? begin.codePointAt(begin.length - 1)! : 1;
   const de = end.length ? end.codePointAt(end.length - 1)! : 127;

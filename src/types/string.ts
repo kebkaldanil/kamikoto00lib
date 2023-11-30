@@ -42,3 +42,7 @@ export type StrLen<Str extends string> = If<
   number,
   Split<Str, "">["length"]
 >;
+
+export interface StringLike<T extends string = string> {
+  toString(): T;
+}

@@ -143,3 +143,7 @@ export type IsGreaterDigitsArrayInInteger<
   [IsLengthGreater<A, B>, true],
   [IsLengthGreater<B, A>, false],
 ], IsGreaterDigitsArray<A, B>>;
+
+export interface NumberLike<T extends number | bigint = number> {
+  valueOf(): T;
+}

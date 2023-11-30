@@ -1,10 +1,11 @@
-import { build, emptyDir, PackageJson } from "https://deno.land/x/dnt@0.38.0/mod.ts";
-import * as flagsModule from "https://deno.land/std@0.194.0/flags/mod.ts";
+import { build, emptyDir, PackageJson } from "https://deno.land/x/dnt@0.39.0/mod.ts";
+import * as flagsModule from "https://deno.land/std@0.208.0/flags/mod.ts";
 
 const args = flagsModule.parse(Deno.args, {
   boolean: [
     "link",
     "publish",
+    "autoformat",
   ],
   string: [
     "dist",
@@ -13,9 +14,10 @@ const args = flagsModule.parse(Deno.args, {
   ],
   alias: {
     "dist": ["d"],
-    "link": ["l"],
-    "package-manager": ["m"],
+    "link": ["l", "ln"],
+    "package-manager": ["m", "pm"],
     "publish": ["p"],
+    "autoformat": ["f", "format", "autofmt", "fmt"],
   },
   default: {
     dist: "./dist",
@@ -24,7 +26,8 @@ const args = flagsModule.parse(Deno.args, {
 const {
   dist: distDir,
   link: doLink,
-  publish: doPublish
+  publish: doPublish,
+  autoformat,
 } = args;
 const packageManager = args["package-manager"] || Deno.env.get("PACKAGE_MANAGER") ||
   "npm";
@@ -37,6 +40,7 @@ class RunPmCommandError extends Error {
   ) {
     const { code, signal } = status;
     super(`${command} failed. Code" ${code};${signal ? `Signal: ${status.signal}` : ""}`);
+    this.name = RunPmCommandError.name;
   }
 }
 RunPmCommandError.prototype.name = RunPmCommandError.name;
@@ -78,6 +82,10 @@ const packageJson = JSON.parse(
 delete packageJson.scripts;
 delete packageJson.devDependencies;
 delete packageJson.publishConfig;
+
+if (autoformat) {
+  await format("./src");
+}
 
 await build({
   entryPoints: ["./src/index.ts"],
@@ -131,4 +139,8 @@ async function link() {
       return;
   }
   await runPmCommand("link", { args, cwd: distDir });
+}
+
+async function format(path: string, cwd?: string) {
+  await runPmCommand("deno", { cwd, args: ["fmt", path] });
 }

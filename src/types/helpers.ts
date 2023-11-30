@@ -1,4 +1,4 @@
-import { ArrayAsString, ArrayConvertableToString } from "./array.ts";
+import { AnyArray, ArrayAsString, ArrayConvertableToString } from "./array.ts";
 import {
   _Extends,
   And,
@@ -10,6 +10,9 @@ import {
   Or,
 } from "../type-logic.ts";
 import { Method } from "./function.ts";
+import { ObjectLike } from "./object.ts";
+import { NumberLike } from "./number.ts";
+import { StringLike } from "./string.ts";
 
 /**except symbol*/
 export type primitive<T extends null | false = false> =
@@ -93,6 +96,7 @@ export type FunctionArguments<T extends Method> = T extends
   ((...args: infer A extends unknown[]) => unknown) ? A : never;
 
 export interface ErrorClass {
+  new (...args: AnyArray): Error;
   readonly prototype: Error;
   readonly name: string;
 }
@@ -110,3 +114,8 @@ export type IsPrimitiveConvertableTo<
   T extends primitive<null>,
   E extends primitive<null>,
 > = Or<Extends<T, E>, Extends<`${T}`, `${E}`>>;
+
+export type Like<T> = T extends T ? T extends number | bigint ? NumberLike<T>
+  : T extends string ? StringLike<T>
+  : ObjectLike<T>
+  : never;
