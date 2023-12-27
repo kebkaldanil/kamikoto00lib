@@ -1,7 +1,9 @@
 import { build, emptyDir, PackageJson } from "https://deno.land/x/dnt@0.39.0/mod.ts";
-import * as flagsModule from "https://deno.land/std@0.208.0/flags/mod.ts";
+import * as flagsModule from "https://deno.land/std@0.210.0/cli/parse_args.ts";
 
-const args = flagsModule.parse(Deno.args, {
+const textDecoder = new TextDecoder();
+
+const args = flagsModule.parseArgs(Deno.args, {
   boolean: [
     "link",
     "publish",
@@ -32,7 +34,7 @@ const {
 const packageManager = args["package-manager"] || Deno.env.get("PACKAGE_MANAGER") ||
   "npm";
 
-class RunPmCommandError extends Error {
+class RunCommandError extends Error {
   constructor(
     readonly command: string,
     readonly process: Deno.ChildProcess,
@@ -40,44 +42,59 @@ class RunPmCommandError extends Error {
   ) {
     const { code, signal } = status;
     super(`${command} failed. Code" ${code};${signal ? `Signal: ${status.signal}` : ""}`);
-    this.name = RunPmCommandError.name;
   }
 }
-RunPmCommandError.prototype.name = RunPmCommandError.name;
-async function runPmCommand(command: string, options?: Deno.CommandOptions) {
-  const args = options?.args ? [command, ...options.args] : [command];
+RunCommandError.prototype.name = RunCommandError.name;
+
+async function runCommand(command: string, options?: Deno.CommandOptions) {
   const _options = {
     stderr: "piped",
     stdout: "piped",
     stdin: "null",
     ...options,
-    args,
   } satisfies Deno.CommandOptions;
-  console.log(`${packageManager} ${args.join(" ")}`);
-  let process: Deno.ChildProcess;
-  try {
-    process = new Deno.Command(packageManager, _options).spawn();
-  } catch (e) {
-    if (Deno.build.os === "windows") {
-      process = new Deno.Command(packageManager + ".cmd", _options).spawn();
-    } else {
-      throw e;
+  const fullCommand = [command, ...options?.args || []].join(" ");
+  console.log(fullCommand);
+  const tryVariants = [command];
+  if (Deno.build.os === "windows") {
+    tryVariants.push(
+      command + ".bat",
+      command + ".cmd",
+      command + ".ps1",
+    );
+  }
+  let firstError: unknown;
+  let process: Deno.ChildProcess | undefined;
+  while (tryVariants.length) {
+    try {
+      process = new Deno.Command(tryVariants.pop()!, _options).spawn();
+      break;
+    } catch (e) {
+      if (firstError === undefined) {
+        firstError = e;
+      }
     }
+  }
+  if (process === undefined) {
+    throw firstError;
   }
   process.stderr.pipeTo(Deno.stderr.writable, { preventClose: true });
   process.stdout.pipeTo(Deno.stdout.writable, { preventClose: true });
   const status = await process.status;
   if (!status.success) {
-    throw new RunPmCommandError(`${packageManager} ${args.join(" ")}`, process, status);
+    throw new RunCommandError(fullCommand, process, status);
   }
   return process;
 }
 
+function runPmCommand(command: string, options?: Deno.CommandOptions) {
+  const args = [command, ...options?.args || []];
+  return runCommand(packageManager, { ...options, args });
+}
+
 await emptyDir(distDir);
 
-const packageJson = JSON.parse(
-  new TextDecoder().decode(await Deno.readFile("./package.json")),
-) as PackageJson;
+const packageJson = JSON.parse(textDecoder.decode(await Deno.readFile("./package.json"))) as PackageJson;
 
 delete packageJson.scripts;
 delete packageJson.devDependencies;
@@ -121,7 +138,7 @@ async function publish() {
       return;
     }
   }
-  await runPmCommand("publish", { cwd: distDir, args: ["--no-git-checks", `--otp=${String.raw`${otp}`}`] });
+  await runPmCommand("publish", { cwd: distDir, args: ["--no-git-checks", `--otp=${otp.replace(/s+/g, "")}`] });
 }
 
 async function link() {
@@ -142,5 +159,5 @@ async function link() {
 }
 
 async function format(path: string, cwd?: string) {
-  await runPmCommand("deno", { cwd, args: ["fmt", path] });
+  await runCommand("deno", { cwd, args: ["fmt", path] });
 }
